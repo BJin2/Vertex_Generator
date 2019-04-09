@@ -105,7 +105,7 @@ void init(void)
 		break;
 	}
 
-	
+
 #pragma endregion
 
 
@@ -251,7 +251,7 @@ void init(void)
 
 #pragma region Plane
 
-	temp = new DrawableObject(4, Type::Column, TextureID::Brick);
+	temp = new DrawableObject(NumVerticesPlane, Type::Column, TextureID::Brick);
 
 	textures = new GLuint[10];
 	//texture
@@ -267,7 +267,7 @@ void init(void)
 	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
 
 
-	
+
 
 
 #pragma endregion
@@ -333,14 +333,14 @@ void idle()
 //
 // main
 //
-void Timer(int id) 
+void Timer(int id)
 {
 	glutPostRedisplay();
 	glutTimerFunc(15, Timer, 0);
 }
-void KeyDown(unsigned char key, int x, int y) 
+void KeyDown(unsigned char key, int x, int y)
 {
-	switch (key) 
+	switch (key)
 	{
 	case 'w':
 		CamPos.z -= (deltaTime / 1000.0f) * 5.f;
@@ -406,7 +406,7 @@ int main(int argc, char** argv)
 	cout << "Enter number of plane(Smaller than 255) : ";
 	cin >> NumVerticesPlane;
 
-	cout <<endl<<endl<< "---- Texture id list ----" << endl;
+	cout << endl << endl << "---- Texture id list ----" << endl;
 	cout << "1. Diagonal Lines(Debug)" << endl << "2. Diagonal Lines" << endl << "3. Cubes" << endl;
 	cout << "Enter number of texture id you want to use : ";
 	int temp = 0;

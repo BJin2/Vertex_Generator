@@ -1,4 +1,5 @@
 #include "VertexGenerator.hpp"
+#include <iostream>
 
 Transform::Transform()
 {
@@ -17,6 +18,30 @@ Transform::Transform(glm::vec3 pos, glm::vec3 axis, float angle, glm::vec3 scl)
 
 GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numIndex)
 {
+	float angle = 360.0f / (float)numCorner;
+	GLfloat* tempPos = new GLfloat[numCorner * 2];
+
+	for (int i = 0; i < numCorner * 2; i += 2)
+	{
+		float curAngle = (i / 2) * angle *-1;
+		float curRad = glm::radians(curAngle);
+		//*/
+		if (curAngle == 180 || curAngle == -180)
+			tempPos[i] = 0.0f;
+		else
+			tempPos[i] = glm::sin(curRad);
+
+		if (curAngle == 90 || curAngle == 270 || curAngle == -90 || curAngle == -270)
+			tempPos[i + 1] = 0.0f;
+		else
+			tempPos[i + 1] = glm::cos(curRad);
+		/*/
+		tempPos[i] = glm::sin(curAngle);
+		tempPos[i + 1] = glm::cos(curAngle);
+		//*/
+		std::cout << curAngle << std::endl;
+		std::cout << " X : " << tempPos[i] << ", Y : " << tempPos[i + 1] << std::endl;
+	}
 
 	// will be replaced with proper vertex calculation
 #pragma region Temp

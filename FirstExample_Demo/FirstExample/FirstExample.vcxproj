@@ -89,8 +89,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="KB-101131832-Assignment4.cpp" />
     <ClCompile Include="LoadShaders.cpp" />
+    <ClCompile Include="VertexGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="triangles.frag" />
@@ -98,6 +100,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\Dropbox\oglpg-8th-edition\include\LoadShaders.h" />
+    <ClInclude Include="DrawableObject.hpp" />
+    <ClInclude Include="VertexGenerator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="Debug\LoadShaders.obj" />

@@ -24,21 +24,20 @@ using namespace std;
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "SOIL.h"
+#include "DrawableObject.hpp"
+
 
 enum VAO_IDs { Triangles, NumVAOs };
 enum Buffer_IDs { ArrayBuffer, NumBuffers = 2 };
 enum Attrib_IDs { vPosition = 0 };
 enum TextureIDs { DiagonalLines_Debug = 1, DiagonalLines, Cubes };
 
-GLuint gVAO_Plane;
-GLuint texture_plane = 0;
-
-const GLfloat scale = 1.0f;
-float rotation = 0.0f;
-
 int curTime;
 int prevTime;
 int deltaTime;
+
+DrawableObject* temp;
+GLuint* textures;
 
 GLuint MatrixID;
 GLuint ModelMatrixID;
@@ -111,7 +110,7 @@ void init(void)
 
 
 #pragma region Plane
-
+	/*/
 	int numVertex = (NumVerticesPlane + 1)*(NumVerticesPlane + 1);
 	GLfloat* vertices_plane = new GLfloat[numVertex * 3];
 	GLfloat* tex_plane = new GLfloat[numVertex * 2];
@@ -245,6 +244,31 @@ void init(void)
 	glGenBuffers(1, &IBO_Plane);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_Plane);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (NumVerticesPlane*NumVerticesPlane * 6) * sizeof(GLushort), index_array_plane, GL_STATIC_DRAW);
+	//*/
+#pragma endregion
+
+
+
+#pragma region Plane
+
+	temp = new DrawableObject(4, Type::Column, TextureID::Brick);
+
+	textures = new GLuint[10];
+	//texture
+	glGenTextures(1, &textures[0]);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+
+
+	
+
 
 #pragma endregion
 
@@ -264,7 +288,10 @@ void transformObject(glm::vec3 scale, glm::vec3 rotationAxis, float rotationAngl
 	glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, glm::value_ptr(Model));
 	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, glm::value_ptr(View));
 }
-
+void transformObject(Transform transform)
+{
+	transformObject(transform.scale, transform.rotationAxis, transform.rotationAngle, transform.position);
+}
 //---------------------------------------------------------------------
 //
 // display
@@ -286,13 +313,13 @@ void display(void)
 		glm::vec3(0, 1, 0)
 	);
 
-	glBindVertexArray(gVAO_Plane);
-	glBindTexture(GL_TEXTURE_2D, texture_plane);
-	transformObject(glm::vec3(scale, scale, scale), glm::vec3(0, 1, 0), 0, glm::vec3(0.0f, 0.0f, 0.0f));
-	glDrawElements(GL_TRIANGLES, (NumVerticesPlane*NumVerticesPlane * 6), GL_UNSIGNED_SHORT, 0);
-	glDrawElements(GL_LINE, (NumVerticesPlane*NumVerticesPlane * 6), GL_UNSIGNED_SHORT, 0);
+	// will be in loop
+	glBindVertexArray(*temp->getVAO());
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	transformObject(temp->transform);
+	glDrawElements(GL_TRIANGLES, *temp->num_index, GL_UNSIGNED_SHORT, 0);
 
-	rotation += (deltaTime/1000.0f) * 30;
+
 	prevTime = curTime;
 	glutSwapBuffers();
 }

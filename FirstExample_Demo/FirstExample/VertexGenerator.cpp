@@ -81,23 +81,29 @@ GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex
 		normal_plane[index + 1] = 0.0f;
 		normal_plane[index + 2] = -1.0f;
 
-		//tex_plane[index_uv] = j * difference;
-		//tex_plane[index_uv + 1] = 1 - i * difference;
+		normal_plane[index + 3] = 0.0f;
+		normal_plane[index + 4] = 0.0f;
+		normal_plane[index + 5] = -1.0f;
 
+		normal_plane[index + 6] = 0.0f;
+		normal_plane[index + 7] = 0.0f;
+		normal_plane[index + 8] = -1.0f;
 		index += 9;
-		//index_uv += 2;
 	}
-	int tempIndex = index;
-	//Vertex
-	for (int i = 0; i < numCorner * 2; i+=2)
-	{
-		vertices_plane[index] = tempPos[i % (numCorner * 2)];
-		vertices_plane[index + 1] = -0.5f;
-		vertices_plane[index + 2] = tempPos[(i + 1) % (numCorner * 2)];
 
-		vertices_plane[index + 3] = tempPos[(i + 2) % (numCorner * 2)];
+	//Vertex
+	for (int i = (numCorner * 2) - 2; i >= 0; i -= 2)
+	{
+		int temp_i = i - 2 >= 0 ? i - 2 : (numCorner * 2) - 2;
+		int temp_i2 = i - 1 >= 0 ? i - 1 : (numCorner * 2) - 1;
+
+		vertices_plane[index] = tempPos[i];
+		vertices_plane[index + 1] = -0.5f;
+		vertices_plane[index + 2] = tempPos[i+1];
+
+		vertices_plane[index + 3] = tempPos[temp_i];
 		vertices_plane[index + 4] = -0.5f;
-		vertices_plane[index + 5] = tempPos[(i + 3) % (numCorner * 2)];
+		vertices_plane[index + 5] = tempPos[temp_i2];
 
 		vertices_plane[index + 6] = 0.0f;
 		vertices_plane[index + 7] = 0.5f;
@@ -105,14 +111,19 @@ GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex
 
 		normal_plane[index] = 0.0f;
 		normal_plane[index + 1] = 0.0f;
-		normal_plane[index + 2] = 1.0f;
+		normal_plane[index + 2] = -1.0f;
 
-		//tex_plane[index_uv] = j * difference;
-		//tex_plane[index_uv + 1] = 1 - i * difference;
+		normal_plane[index + 3] = 0.0f;
+		normal_plane[index + 4] = 0.0f;
+		normal_plane[index + 5] = -1.0f;
+
+		normal_plane[index + 6] = 0.0f;
+		normal_plane[index + 7] = 0.0f;
+		normal_plane[index + 8] = -1.0f;
 
 		index += 9;
-		//index_uv += 2;
 	}
+
 
 	GLuint* VAO = new GLuint();
 	glGenVertexArrays(1, VAO);

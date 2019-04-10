@@ -37,6 +37,7 @@ int prevTime;
 int deltaTime;
 
 DrawableObject* temp;
+DrawableObject* tempCamPos;
 GLuint* textures;
 
 GLuint MatrixID;
@@ -66,7 +67,7 @@ void init(void)
 	GLuint program = LoadShaders(shaders);
 	glUseProgram(program);	//My Pipeline is set up
 
-	LightPos = glm::vec3(0, 0, 1.f);
+	LightPos = glm::vec3(0, 0, 3.f);
 	CamPos = glm::vec3(0, 0, 3.f);
 	MatrixID = glGetUniformLocation(program, "MVP");
 	ModelMatrixID = glGetUniformLocation(program, "M");
@@ -252,7 +253,9 @@ void init(void)
 #pragma region Plane
 
 	temp = new DrawableObject(NumVerticesPlane, Type::Column, TextureID::Brick);
-
+	tempCamPos = new DrawableObject(4, Type::Column, TextureID::Brick);
+	tempCamPos->transform.scale = glm::vec3(0.2f);
+	tempCamPos->transform.position = LightPos;
 	textures = new GLuint[10];
 	//texture
 	glGenTextures(1, &textures[0]);
@@ -319,6 +322,11 @@ void display(void)
 	transformObject(temp->transform);
 	glDrawElements(GL_TRIANGLES, *temp->num_index, GL_UNSIGNED_SHORT, 0);
 
+	glBindVertexArray(*tempCamPos->getVAO());
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	transformObject(tempCamPos->transform);
+	glDrawElements(GL_TRIANGLES, *tempCamPos->num_index, GL_UNSIGNED_SHORT, 0);
+
 
 	prevTime = curTime;
 	glutSwapBuffers();
@@ -369,21 +377,37 @@ void KeyDown(unsigned char key, int x, int y)
 	case 'i':
 		LightPos.y += (deltaTime / 1000.0f) * 5.f;
 		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
 		//printf("In\n");
 		break;
 	case 'j':
 		LightPos.x -= (deltaTime / 1000.0f) * 5.f;
 		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
 		//printf("Out\n");
 		break;
 	case 'k':
 		LightPos.y -= (deltaTime / 1000.0f) * 5.f;
 		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
 		//printf("Left\n");
 		break;
 	case 'l':
 		LightPos.x += (deltaTime / 1000.0f) * 5.f;
 		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
+		//printf("Right\n");
+		break;
+	case 'u':
+		LightPos.z += (deltaTime / 1000.0f) * 5.f;
+		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
+		//printf("Right\n");
+		break;
+	case 'o':
+		LightPos.z -= (deltaTime / 1000.0f) * 5.f;
+		glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+		tempCamPos->transform.position = LightPos;
 		//printf("Right\n");
 		break;
 	default:

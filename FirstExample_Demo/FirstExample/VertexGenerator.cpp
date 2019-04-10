@@ -16,7 +16,7 @@ Transform::Transform(glm::vec3 pos, glm::vec3 axis, float angle, glm::vec3 scl)
 	scale = scl;
 }
 
-GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numIndex)
+GLfloat * VertexGenerator::CreateShape(int numCorner)
 {
 	float angle = 360.0f / (float)numCorner;
 	GLfloat* tempPos = new GLfloat[numCorner * 2];
@@ -43,6 +43,13 @@ GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numInd
 		std::cout << " X : " << tempPos[i] << ", Y : " << tempPos[i + 1] << std::endl;
 	}
 
+	return tempPos;
+}
+
+GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numIndex)
+{
+	
+	GLfloat* tempPos = VertexGenerator::CreateShape(numCorner);
 	// will be replaced with proper vertex calculation
 #pragma region Temp
 	int numVertex = (numCorner + 1)*(numCorner + 1);

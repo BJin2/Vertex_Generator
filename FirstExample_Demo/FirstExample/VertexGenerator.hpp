@@ -28,6 +28,7 @@ enum TextureID
 
 namespace VertexGenerator
 {
+	GLfloat* CreateShape(int numCorner);
 	GLuint* CreateColumn(int numCorner, TextureID id, int* numIndex);
 	//GLuint* CreateCone(int numCorner, TextureID id, int* numIndex);
 	//GLuint* CreatePlane(int numCorner, TextureID id, int* numIndex);

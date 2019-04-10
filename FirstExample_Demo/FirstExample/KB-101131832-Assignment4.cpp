@@ -413,10 +413,12 @@ int main(int argc, char** argv)
 
 	glewInit();	//Initializes the glew and prepares the drawing pipeline.
 
-	glEnable(GL_DEPTH_TEST);
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+
+
 
 	//*/
 	cout << "Enter number of plane(Smaller than 255) : ";

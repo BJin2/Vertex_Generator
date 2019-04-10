@@ -14,7 +14,7 @@ DrawableObject::DrawableObject(int numCorner, Type type, TextureID id)
 	switch (type)
 	{
 	case Type::Cone:
-		//VAO = VertexGenerator::CreateCone(numCorner, id, num_index);
+		VAO = VertexGenerator::CreateCone(numCorner, id, num_index);
 		break;
 	case Type::Plane:
 		//VAO = VertexGenerator::CreatePlane(numCorner, id, num_index);

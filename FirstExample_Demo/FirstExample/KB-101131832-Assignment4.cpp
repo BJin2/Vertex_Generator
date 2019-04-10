@@ -37,6 +37,7 @@ int prevTime;
 int deltaTime;
 
 DrawableObject* temp;
+DrawableObject* corn;
 GLuint* textures;
 
 GLuint MatrixID;
@@ -250,8 +251,24 @@ void init(void)
 
 
 #pragma region Plane
+	//temp = new DrawableObject(NumVerticesPlane, Type::Column, TextureID::Brick);
+	//
+	//textures = new GLuint[10];
+	////texture
+	//glGenTextures(1, &textures[0]);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	//
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+#pragma endregion
 
-	temp = new DrawableObject(NumVerticesPlane, Type::Column, TextureID::Brick);
+#pragma region Corn
+	corn = new DrawableObject(NumVerticesPlane, Type::Cone, TextureID::Brick);
 
 	textures = new GLuint[10];
 	//texture
@@ -259,18 +276,14 @@ void init(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
+	
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
-
-
-
-
-
 #pragma endregion
+
 
 }
 
@@ -314,10 +327,10 @@ void display(void)
 	);
 
 	// will be in loop
-	glBindVertexArray(*temp->getVAO());
+	glBindVertexArray(*corn->getVAO());
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	transformObject(temp->transform);
-	glDrawElements(GL_TRIANGLES, *temp->num_index, GL_UNSIGNED_SHORT, 0);
+	transformObject(corn->transform);
+	glDrawElements(GL_TRIANGLES, *corn->num_index, GL_UNSIGNED_SHORT, 0);
 
 
 	prevTime = curTime;
@@ -401,6 +414,9 @@ int main(int argc, char** argv)
 	glewInit();	//Initializes the glew and prepares the drawing pipeline.
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 	//*/
 	cout << "Enter number of plane(Smaller than 255) : ";
@@ -409,6 +425,7 @@ int main(int argc, char** argv)
 	cout << endl << endl << "---- Texture id list ----" << endl;
 	cout << "1. Diagonal Lines(Debug)" << endl << "2. Diagonal Lines" << endl << "3. Cubes" << endl;
 	cout << "Enter number of texture id you want to use : ";
+
 	int temp = 0;
 	cin >> temp;
 	textureID = (TextureIDs)temp;

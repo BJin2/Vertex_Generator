@@ -399,8 +399,10 @@ int main(int argc, char** argv)
 	glutCreateWindow("Kim Beomjin 101131832");
 
 	glewInit();	//Initializes the glew and prepares the drawing pipeline.
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
+	
 
 	//*/
 	cout << "Enter number of plane(Smaller than 255) : ";

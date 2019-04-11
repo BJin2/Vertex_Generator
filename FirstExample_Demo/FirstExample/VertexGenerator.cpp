@@ -95,31 +95,40 @@ GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex
 		index_uv += 6;
 	}
 		//Top
-	for (int i = 0; i < numCorner * 2; i += 2)
+	for (int i = (numCorner * 2) - 2; i >= 0; i -= 2)
 	{
+		int temp_i = i - 2 >= 0 ? i - 2 : (numCorner * 2) - 2;
+		int temp_i2 = i - 1 >= 0 ? i - 1 : (numCorner * 2) - 1;
+
 		vert[index_vert] = tempPos[i];
 		vert[index_vert + 1] = -0.5f;
-		vert[index_vert + 2] = tempPos[(i + 1) % (numCorner * 2)];
+		vert[index_vert + 2] = tempPos[i+1];
+		glm::vec3 a = glm::vec3(vert[index_vert], vert[index_vert + 1], vert[index_vert + 2]);
 
-		vert[index_vert + 3] = tempPos[(i + 2) % (numCorner * 2)];
+		vert[index_vert + 3] = tempPos[temp_i];
 		vert[index_vert + 4] = -0.5f;
-		vert[index_vert + 5] = tempPos[(i + 3) % (numCorner * 2)];
+		vert[index_vert + 5] = tempPos[temp_i2];
+		glm::vec3 b = glm::vec3(vert[index_vert + 3], vert[index_vert + 4], vert[index_vert + 5]);
 
 		vert[index_vert + 6] = 0.0f;
 		vert[index_vert + 7] = 0.5f;
 		vert[index_vert + 8] = 0.0f;
+		glm::vec3 c = glm::vec3(vert[index_vert + 6], vert[index_vert + 7], vert[index_vert + 8]);
 
-		normal[index_vert] = 0.0f;
-		normal[index_vert + 1] = -1.0f;
-		normal[index_vert + 2] = 0.0f;
+		glm::vec3 normalPerVertex = glm::cross((a - c), (b - c));
+		glm::normalize(normalPerVertex);
 
-		normal[index_vert + 3] = 0.0f;
-		normal[index_vert + 4] = -1.0f;
-		normal[index_vert + 5] = 0.0f;
+		normal[index_vert] = normalPerVertex.x;
+		normal[index_vert + 1] = normalPerVertex.y;
+		normal[index_vert + 2] = normalPerVertex.z;
 
-		normal[index_vert + 6] = 0.0f;
-		normal[index_vert + 7] = -1.0f;
-		normal[index_vert + 8] = 0.0f;
+		normal[index_vert + 3] = normalPerVertex.x;
+		normal[index_vert + 4] = normalPerVertex.y;
+		normal[index_vert + 5] = normalPerVertex.z;
+
+		normal[index_vert + 6] = normalPerVertex.x;
+		normal[index_vert + 7] = normalPerVertex.y;
+		normal[index_vert + 8] = normalPerVertex.z;
 
 		uv[index_uv] = (tempPos[i] + 1) / 2.f;
 		uv[index_uv + 1] = (tempPos[(i + 1) % (numCorner * 2)] + 1) / 2.f;

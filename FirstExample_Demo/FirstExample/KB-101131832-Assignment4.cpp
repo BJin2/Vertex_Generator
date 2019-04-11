@@ -38,6 +38,7 @@ int deltaTime;
 
 DrawableObject* temp;
 DrawableObject* tempCamPos;
+DrawableObject* tempCone;
 GLuint* textures;
 
 GLuint MatrixID;
@@ -268,11 +269,24 @@ void init(void)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+#pragma endregion
 
+#pragma region Cone
+	
+	tempCone = new DrawableObject(NumVerticesPlane, Type::Cone, TextureID::Brick);
 
+	textures = new GLuint[10];
+	//texture
+	glGenTextures(1, &textures[0]);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
-
-
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
 #pragma endregion
 
 }
@@ -317,10 +331,15 @@ void display(void)
 	);
 
 	// will be in loop
-	glBindVertexArray(*temp->getVAO());
+	//glBindVertexArray(*temp->getVAO());
+	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//transformObject(temp->transform);
+	//glDrawElements(GL_TRIANGLES, *temp->num_index, GL_UNSIGNED_SHORT, 0);
+
+	glBindVertexArray(*tempCone->getVAO());
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	transformObject(temp->transform);
-	glDrawElements(GL_TRIANGLES, *temp->num_index, GL_UNSIGNED_SHORT, 0);
+	transformObject(tempCone->transform);
+	glDrawElements(GL_TRIANGLES, *tempCone->num_index, GL_UNSIGNED_SHORT, 0);
 
 	glBindVertexArray(*tempCamPos->getVAO());
 	glBindTexture(GL_TEXTURE_2D, textures[0]);

@@ -40,6 +40,144 @@ GLfloat * VertexGenerator::CreateShape(int numCorner)
 	return tempPos;
 }
 
+GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex)
+{
+	GLfloat* tempPos = VertexGenerator::CreateShape(numCorner);
+
+	int numVertex = ((numCorner * 3) * 2) + (numCorner * 6);
+
+	GLfloat* vert = new GLfloat[numVertex * 3];
+	GLfloat* normal = new GLfloat[numVertex * 3];
+	GLfloat* uv = new GLfloat[numVertex * 2];
+
+	GLushort* index_array = new GLushort[numVertex];
+
+	int index_vert = 0;
+	int index_uv = 0;
+
+	//Bottom
+	for (int i = 0; i < numCorner * 2; i += 2)
+	{
+		vert[index_vert] = tempPos[i];
+		vert[index_vert + 1] = -0.5f;
+		vert[index_vert + 2] = tempPos[(i + 1) % (numCorner * 2)];
+
+		vert[index_vert + 3] = tempPos[(i + 2) % (numCorner * 2)];
+		vert[index_vert + 4] = -0.5f;
+		vert[index_vert + 5] = tempPos[(i + 3) % (numCorner * 2)];
+
+		vert[index_vert + 6] = 0.0f;
+		vert[index_vert + 7] = -0.5f;
+		vert[index_vert + 8] = 0.0f;
+
+		normal[index_vert] = 0.0f;
+		normal[index_vert + 1] = -1.0f;
+		normal[index_vert + 2] = 0.0f;
+
+		normal[index_vert + 3] = 0.0f;
+		normal[index_vert + 4] = -1.0f;
+		normal[index_vert + 5] = 0.0f;
+
+		normal[index_vert + 6] = 0.0f;
+		normal[index_vert + 7] = -1.0f;
+		normal[index_vert + 8] = 0.0f;
+
+		uv[index_uv] = (tempPos[i] + 1) / 2.f;
+		uv[index_uv + 1] = (tempPos[(i + 1) % (numCorner * 2)] + 1) / 2.f;
+
+		uv[index_uv + 2] = (tempPos[(i + 2) % (numCorner * 2)] + 1) / 2.f;
+		uv[index_uv + 3] = (tempPos[(i + 3) % (numCorner * 2)] + 1) / 2.f;
+
+		uv[index_uv + 4] = 0.5f;
+		uv[index_uv + 5] = 0.5f;
+
+		index_vert += 9;
+		index_uv += 6;
+	}
+		//Top
+	for (int i = 0; i < numCorner * 2; i += 2)
+	{
+		vert[index_vert] = tempPos[i];
+		vert[index_vert + 1] = -0.5f;
+		vert[index_vert + 2] = tempPos[(i + 1) % (numCorner * 2)];
+
+		vert[index_vert + 3] = tempPos[(i + 2) % (numCorner * 2)];
+		vert[index_vert + 4] = -0.5f;
+		vert[index_vert + 5] = tempPos[(i + 3) % (numCorner * 2)];
+
+		vert[index_vert + 6] = 0.0f;
+		vert[index_vert + 7] = 0.5f;
+		vert[index_vert + 8] = 0.0f;
+
+		normal[index_vert] = 0.0f;
+		normal[index_vert + 1] = -1.0f;
+		normal[index_vert + 2] = 0.0f;
+
+		normal[index_vert + 3] = 0.0f;
+		normal[index_vert + 4] = -1.0f;
+		normal[index_vert + 5] = 0.0f;
+
+		normal[index_vert + 6] = 0.0f;
+		normal[index_vert + 7] = -1.0f;
+		normal[index_vert + 8] = 0.0f;
+
+		uv[index_uv] = (tempPos[i] + 1) / 2.f;
+		uv[index_uv + 1] = (tempPos[(i + 1) % (numCorner * 2)] + 1) / 2.f;
+
+		uv[index_uv + 2] = (tempPos[(i + 2) % (numCorner * 2)] + 1) / 2.f;
+		uv[index_uv + 3] = (tempPos[(i + 3) % (numCorner * 2)] + 1) / 2.f;
+
+		uv[index_uv + 4] = 0.5f;
+		uv[index_uv + 5] = 0.5f;
+
+		index_vert += 9;
+		index_uv += 6;
+	}
+
+	for (int i = 0; i < numVertex; i++)
+	{
+		index_array[i] = i;
+	}
+
+	GLuint* VAO = new GLuint();
+	glGenVertexArrays(1, VAO);
+	glBindVertexArray(*VAO);
+
+	// buffer for vertex
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, numVertex * 3 * sizeof(GLfloat), vert, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	// buffer for texture coordinate
+	GLuint UBO;
+	glGenBuffers(1, &UBO);
+	glBindBuffer(GL_ARRAY_BUFFER, UBO);
+	glBufferData(GL_ARRAY_BUFFER, numVertex * 2 * sizeof(GLfloat), uv, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
+
+	// buffer for normal
+	GLuint NBO;
+	glGenBuffers(1, &NBO);
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(GL_ARRAY_BUFFER, numVertex * 3 * sizeof(GLfloat), normal, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);
+
+	// buffer for index
+	GLuint IBO;
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numVertex * sizeof(GLushort), index_array, GL_STATIC_DRAW);
+	*numIndex = numVertex;
+
+	return VAO;
+	
+}
+
 GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numIndex)
 {
 	
@@ -55,6 +193,8 @@ GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numInd
 
 	int index_vert = 0;
 	int index_uv = 0;
+
+
 
 #pragma region Bottom
 	for (int i = 0; i < numCorner*2; i+=2)

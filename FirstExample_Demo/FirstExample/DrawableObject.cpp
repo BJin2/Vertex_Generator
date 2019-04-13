@@ -14,7 +14,7 @@ DrawableObject::DrawableObject(int numCorner, Type type, TextureID id)
 	switch (type)
 	{
 	case Type::Cone:
-		VAO = VertexGenerator::CreateCone(numCorner, id, num_index);
+		VAO = VertexGenerator::CreateCone(numCorner, num_index);
 		break;
 	case Type::Plane:
 		//VAO = VertexGenerator::CreatePlane(numCorner, id, num_index);
@@ -24,7 +24,13 @@ DrawableObject::DrawableObject(int numCorner, Type type, TextureID id)
 		break;
 	case Type::Column:
 	default:
-		VAO = VertexGenerator::CreateColumn(numCorner, id, num_index);
+		VAO = VertexGenerator::CreateColumn(numCorner, num_index);
 		break;
 	}
+}
+
+DrawableObject::DrawableObject(int numCorner, Type type, TextureID id, Transform t)
+{
+	transform = t;
+	DrawableObject(numCorner, type, id);
 }

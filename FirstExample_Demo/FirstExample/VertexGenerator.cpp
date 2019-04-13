@@ -40,7 +40,7 @@ GLfloat * VertexGenerator::CreateShape(int numCorner)
 	return tempPos;
 }
 
-GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex)
+GLuint * VertexGenerator::CreateCone(int numCorner, int * numIndex)
 {
 	GLfloat* tempPos = VertexGenerator::CreateShape(numCorner);
 
@@ -187,7 +187,7 @@ GLuint * VertexGenerator::CreateCone(int numCorner, TextureID id, int * numIndex
 	
 }
 
-GLuint * VertexGenerator::CreateColumn(int numCorner, TextureID id, int * numIndex)
+GLuint * VertexGenerator::CreateColumn(int numCorner, int * numIndex)
 {
 	
 	GLfloat* tempPos = VertexGenerator::CreateShape(numCorner);

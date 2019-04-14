@@ -42,10 +42,10 @@ int numObj;
 GLuint* textures;
 unsigned char** images;
 const char* paths[4];
-const char* path1 = "bonusTexture.png";
-const char* path2 = "background.png";
-const char* path3 = "background2.png";
-const char* path4 = "rubiksTexture.png";
+const char* path1 = "brick_2.jpg";
+const char* path2 = "roof.jpg";
+const char* path3 = "door.jpg";
+const char* path4 = "etc.jpg";
 
 /*/quaternion
 float transformInfo[] =

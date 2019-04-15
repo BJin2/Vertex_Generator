@@ -1,14 +1,17 @@
 
 /****************************************************************************
-// KB-101131832-Assignment4.cpp by Beomjin Kim (C) 2019 All Rights Reserved.
+// CastleCrasher-Project.cpp by Beomjin Kim and Heaseo Chung (C) 2019 All Rights Reserved.
 //
-// Assignment 4 submission.
+// Final project submission.
 //
 // Description:
 // Additional include and lib directories are relative path.
 // Click run.
-// Enter number of planes.
-// Enter texture id.
+// WASD to move the camera.
+// Mouse to rotate the camera.
+// IJKL to move the first light up down left right
+// UO to move the first light back and forward.
+// The second light position is fixed.
 // See the result.
 //
 //*****************************************************************************/
@@ -36,6 +39,7 @@ int prevTime;
 int deltaTime;
 
 DrawableObject* lightObj;
+DrawableObject* lightObj2;
 DrawableObject** objects;
 int numObj;
 
@@ -71,11 +75,13 @@ GLuint MatrixID;
 GLuint ModelMatrixID;
 GLuint ViewMatrixID;
 GLuint LightPosID;
+GLuint LightPosID2;
 glm::mat4 MVP;
 glm::mat4 View;
 glm::mat4 Projection;
 glm::vec3 CamPos;
 glm::vec3 LightPos;
+glm::vec3 LightPos2;
 
 void init(void)
 {
@@ -100,13 +106,16 @@ void init(void)
 	GLuint program = LoadShaders(shaders);
 	glUseProgram(program);	//My Pipeline is set up
 
-	LightPos = glm::vec3(0, 0, 3.f);
-	CamPos = glm::vec3(0, 0, 3.f);
+	LightPos = glm::vec3(0, 10, 0);
+	LightPos2 = glm::vec3(50, 50, 50.f);
+	CamPos = glm::vec3(15, 10, 15.f);
 	MatrixID = glGetUniformLocation(program, "MVP");
 	ModelMatrixID = glGetUniformLocation(program, "M");
 	ViewMatrixID = glGetUniformLocation(program, "V");
-	LightPosID = glGetUniformLocation(program, "lightPosition");
+	LightPosID = glGetUniformLocation(program, "lightPosition[0]");
+	LightPosID2 = glGetUniformLocation(program, "lightPosition[1]");
 	glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
+	glUniform3fv(LightPosID2, 1, glm::value_ptr(LightPos2));
 	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 2000.0f);
 	View = glm::lookAt(
 		CamPos,
@@ -169,6 +178,10 @@ void init(void)
 	lightObj->transform.scale = glm::vec3(0.2f);
 	lightObj->transform.position = LightPos;
 
+
+	lightObj2 = new DrawableObject(4, Type::Column, TextureID::Brick);
+	lightObj2->transform.scale = glm::vec3(0.2f);
+	lightObj2->transform.position = LightPos2;
 }
 
 void transformObject(glm::vec3 scale, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 translation)
@@ -232,7 +245,12 @@ void display(void)
 	glBindTexture(GL_TEXTURE_2D, textures[lightObj->id]);
 	transformObject(lightObj->transform);
 	glDrawElements(GL_TRIANGLES, *lightObj->num_index, GL_UNSIGNED_SHORT, 0);
-	// will be in loop
+
+	glBindVertexArray(*lightObj2->getVAO());
+	glBindTexture(GL_TEXTURE_2D, textures[lightObj2->id]);
+	transformObject(lightObj2->transform);
+	glDrawElements(GL_TRIANGLES, *lightObj2->num_index, GL_UNSIGNED_SHORT, 0);
+
 	for (int i = 0; i < numObj; i++)
 	{
 		glBindVertexArray(*objects[i]->getVAO());
@@ -336,8 +354,8 @@ int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-	glutInitWindowSize(800, 600);
-	glutCreateWindow("Kim Beomjin 101131832");
+	glutInitWindowSize(1280, 720);
+	glutCreateWindow("CastleCrasher Final Project");
 
 	glewInit();	//Initializes the glew and prepares the drawing pipeline.
 	glEnable(GL_CULL_FACE);

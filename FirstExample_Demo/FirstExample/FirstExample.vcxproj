@@ -90,7 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp" />
-    <ClCompile Include="KB-101131832-Assignment4.cpp" />
+    <ClCompile Include="CastleCrasher-Project.cpp" />
     <ClCompile Include="LoadShaders.cpp" />
     <ClCompile Include="VertexGenerator.cpp" />
   </ItemGroup>

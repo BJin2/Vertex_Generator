@@ -18,13 +18,13 @@
     <ClCompile Include="LoadShaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KB-101131832-Assignment4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DrawableObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VertexGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CastleCrasher-Project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

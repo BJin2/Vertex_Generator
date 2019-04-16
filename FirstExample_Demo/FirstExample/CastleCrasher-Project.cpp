@@ -38,6 +38,7 @@ int curTime;
 int prevTime;
 int deltaTime;
 
+
 DrawableObject* lightObj;
 DrawableObject* lightObj2;
 DrawableObject** objects;
@@ -63,9 +64,6 @@ float transformInfo[] =
 };
 //*/
 
-
-
-
 int objectInfo[] =
 {
 	4, 0, 2, 5, 1, 3, 5, 1, 3, 6, 1, 1, 3, 1, 3, 3, 1, 3, 5, 0, 3, 5, 0, 3, 5, 0, 3, 5, 0, 3, 4, 0, 0, 4, 0, 0, 4, 0, 0, 4, 0, 0, 4, 0, 0, 6, 0, 0, 6, 1, 1, 4, 0, 0, 3, 0, 1, 3, 0, 1, 8, 1, 1, 8, 1, 1, 3, 0, 1, 8, 1, 1, 8, 1, 1, 4, 0, 0, 8, 0, 0, 8, 0, 0, 4, 0, 0, 4, 0, 0, 8, 0, 0, 8, 0, 0, 4, 0, 0, 4, 0, 0, 8, 0, 0, 8, 0, 0, 4, 0, 0, 8, 0, 0, 4, 0, 0, 4, 0, 0, 8, 0, 0, 3, 0, 1, 8, 1, 1, 8, 1, 1, 8, 1, 1, 3, 0, 1, 8, 1, 1, 3, 0, 1, 6, 0, 0, 6, 1, 1, 4, 0, 0, 5, 0, 3, 3, 1, 3, 5, 1, 3, 4, 1, 3, 8, 0, 2, 4, 0, 2, 4, 0, 0, 3, 0, 1, 8, 0, 3, 4, 0, 0, 4, 0, 0, 3, 0, 1, 4, 0, 0, 4, 0, 0, 4, 1, 1, 3, 0, 1, 4, 1, 1, 4, 0, 0, 8, 0, 0, 4, 0, 0, 4, 0, 0, 3, 0, 1, 8, 0, 0, 4, 0, 0, 4, 0, 2, 8, 0, 3, 8, 0, 0, 4, 0, 0, 4, 1, 1, 8, 0, 3, 8, 0, 0, 4, 0, 0, 3, 0, 1, 4, 0, 0, 8, 0, 0, 8, 1, 1, 4, 0, 0, 4, 0, 0, 4, 0, 0
@@ -80,8 +78,12 @@ glm::mat4 MVP;
 glm::mat4 View;
 glm::mat4 Projection;
 glm::vec3 CamPos;
+glm::vec3 lookDir;
+glm::vec3 up;
 glm::vec3 LightPos;
 glm::vec3 LightPos2;
+glm::vec2 mousePos;
+float mouseSensitivity;
 
 void init(void)
 {
@@ -109,6 +111,10 @@ void init(void)
 	LightPos = glm::vec3(0, 10, 0);
 	LightPos2 = glm::vec3(50, 50, 50.f);
 	CamPos = glm::vec3(15, 10, 15.f);
+	lookDir = glm::vec3(0, 0, -1);
+	up = glm::vec3(0, 1, 0);
+	mousePos = glm::vec2(1280/2, 720/2);
+	mouseSensitivity = 1.f;
 	MatrixID = glGetUniformLocation(program, "MVP");
 	ModelMatrixID = glGetUniformLocation(program, "M");
 	ViewMatrixID = glGetUniformLocation(program, "V");
@@ -116,16 +122,16 @@ void init(void)
 	LightPosID2 = glGetUniformLocation(program, "lightPosition[1]");
 	glUniform3fv(LightPosID, 1, glm::value_ptr(LightPos));
 	glUniform3fv(LightPosID2, 1, glm::value_ptr(LightPos2));
-	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 2000.0f);
+	Projection = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 2000.0f);
 	View = glm::lookAt(
 		CamPos,
-		glm::vec3(0, 0, 0),
+		CamPos+lookDir,
 		glm::vec3(0, 1, 0)
 	);
 	curTime = glutGet(GLUT_ELAPSED_TIME);
 	prevTime = curTime;
 	deltaTime = 0;
-
+	
 	for (int i = 0; i < numObj; i++)
 	{
 		/*/
@@ -237,10 +243,11 @@ void display(void)
 	//Update camera position
 	View = glm::lookAt(
 		CamPos,
-		glm::vec3(0, 10, 0),
-		glm::vec3(0, 1, 0)
+		CamPos + lookDir,
+		up
 	);
 
+#pragma region CameraObjects
 	glBindVertexArray(*lightObj->getVAO());
 	glBindTexture(GL_TEXTURE_2D, textures[lightObj->id]);
 	transformObject(lightObj->transform);
@@ -250,7 +257,9 @@ void display(void)
 	glBindTexture(GL_TEXTURE_2D, textures[lightObj2->id]);
 	transformObject(lightObj2->transform);
 	glDrawElements(GL_TRIANGLES, *lightObj2->num_index, GL_UNSIGNED_SHORT, 0);
+#pragma endregion
 
+#pragma region DrawableObjects
 	for (int i = 0; i < numObj; i++)
 	{
 		glBindVertexArray(*objects[i]->getVAO());
@@ -262,6 +271,8 @@ void display(void)
 		//*/
 		glDrawElements(GL_TRIANGLES, *objects[i]->num_index, GL_UNSIGNED_SHORT, 0);
 	}
+#pragma endregion
+
 
 	prevTime = curTime;
 	glutSwapBuffers();
@@ -272,10 +283,6 @@ void idle()
 	glutPostRedisplay();
 }
 
-//---------------------------------------------------------------------
-//
-// main
-//
 void Timer(int id)
 {
 	glutPostRedisplay();
@@ -283,23 +290,28 @@ void Timer(int id)
 }
 void KeyDown(unsigned char key, int x, int y)
 {
+	glm::vec3 z_movement;
 	switch (key)
 	{
 	case 'w':
-		CamPos.z -= (deltaTime / 1000.0f) * 25.f;
+		z_movement = glm::vec3((deltaTime / 1000.0f) * 25.f);
+		z_movement *= lookDir;
+		CamPos += z_movement;
 		//printf("In\n");
 		break;
 	case 's':
-		CamPos.z += (deltaTime / 1000.0f) * 25.f;
+		z_movement = glm::vec3((deltaTime / 1000.0f) * -25.f);
+		z_movement *= lookDir;
+		CamPos += z_movement;
 		//printf("Out\n");
 		break;
 	case 'a':
-		CamPos.x -= (deltaTime / 1000.0f) * 25.f;
-		//printf("Left\n");
+		z_movement = glm::cross(up, lookDir)*(deltaTime / 1000.0f) * 25.f;
+		CamPos += z_movement;
 		break;
 	case 'd':
-		CamPos.x += (deltaTime / 1000.0f) * 25.f;
-		//printf("Right\n");
+		z_movement = glm::cross(lookDir, up)*(deltaTime / 1000.0f) * 25.f;
+		CamPos += z_movement;
 		break;
 	case 'r':
 		CamPos.y += (deltaTime / 1000.0f) * 25.f;
@@ -345,9 +357,45 @@ void KeyDown(unsigned char key, int x, int y)
 		lightObj->transform.position = LightPos;
 		//printf("Right\n");
 		break;
+	case 'q':
+		mouseSensitivity += 0.5f;
+		cout << "Mouse sensitivity up : " << mouseSensitivity << endl;
+		break;
+	case 'e':
+		mouseSensitivity -= 0.5f;
+		cout << "Mouse sensitivity down : " << mouseSensitivity << endl;
+		break;
 	default:
 		break;
 	}
+}
+
+void MouseMove(int _x, int _y)
+{
+	
+	glm::vec2 mouseDelta = glm::vec2(_x, _y) - mousePos;
+	// calculate look direction
+	//rotate look dir on y axis with this angle
+	float angle_hor = (deltaTime / 1000.f) * mouseDelta.x * mouseSensitivity;
+	//rotate look dir on x axis with this angle
+	float angle_ver = (deltaTime / 1000.f) * mouseDelta.y * mouseSensitivity;
+	glm::mat4 rot_mat(1);
+	rot_mat = glm::rotate(rot_mat, -angle_hor, glm::vec3(0, 1, 0));
+	//rot_mat = glm::rotate(rot_mat, -angle_ver, glm::vec3(1, 0, 0));
+	glm::vec3 dir(rot_mat * glm::vec4(lookDir, 1.0));
+	dir.y += angle_ver* (deltaTime / 1000.f)*-10;
+	glm::normalize(dir);
+	lookDir = dir;
+
+
+	//Calculate up vector
+	glm::mat4 rot_y(1);
+	glm::vec3 right = glm::cross(up, dir);
+	glm::normalize(right);
+	//up = glm::cross(dir, right);
+
+	cout << "X : " << lookDir.x << ", Y : " << lookDir.y << ", Z : "<< lookDir.z<<endl;
+	mousePos = glm::vec2(_x, _y);
 }
 
 int main(int argc, char** argv)
@@ -363,10 +411,10 @@ int main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 
 	init();
-
 	glutDisplayFunc(display);
 
 	glutKeyboardFunc(KeyDown);
+	glutMotionFunc(MouseMove);
 
 	glutTimerFunc(15, Timer, 0);
 	//glutIdleFunc(idle);

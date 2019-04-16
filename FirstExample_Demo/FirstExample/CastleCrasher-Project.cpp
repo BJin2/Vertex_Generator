@@ -84,7 +84,7 @@ glm::vec3 LightPos;
 glm::vec3 LightPos2;
 glm::vec2 mousePos;
 float mouseSensitivity;
-
+void MouseMove();
 void init(void)
 {
 	paths[0] = path1;
@@ -113,7 +113,7 @@ void init(void)
 	CamPos = glm::vec3(15, 10, 15.f);
 	lookDir = glm::vec3(0, 0, -1);
 	up = glm::vec3(0, 1, 0);
-	mousePos = glm::vec2(1280/2, 720/2);
+	mousePos = glm::vec2(1280, 720);
 	mouseSensitivity = 1.f;
 	MatrixID = glGetUniformLocation(program, "MVP");
 	ModelMatrixID = glGetUniformLocation(program, "M");
@@ -239,7 +239,7 @@ void display(void)
 	//Calculate deltaTime
 	curTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = curTime - prevTime;
-
+	MouseMove();
 	//Update camera position
 	View = glm::lookAt(
 		CamPos,
@@ -370,9 +370,13 @@ void KeyDown(unsigned char key, int x, int y)
 	}
 }
 
-void MouseMove(int _x, int _y)
+void MouseMove()
 {
-	
+	POINT pos;
+	int _x, _y;
+	GetCursorPos(&pos);
+	_x = pos.x;
+	_y = pos.y;
 	glm::vec2 mouseDelta = glm::vec2(_x, _y) - mousePos;
 	// calculate look direction
 	//rotate look dir on y axis with this angle
@@ -383,18 +387,10 @@ void MouseMove(int _x, int _y)
 	rot_mat = glm::rotate(rot_mat, -angle_hor, glm::vec3(0, 1, 0));
 	//rot_mat = glm::rotate(rot_mat, -angle_ver, glm::vec3(1, 0, 0));
 	glm::vec3 dir(rot_mat * glm::vec4(lookDir, 1.0));
-	dir.y += angle_ver* (deltaTime / 1000.f)*-10;
+	dir.y += angle_ver* -0.5f;
 	glm::normalize(dir);
 	lookDir = dir;
 
-
-	//Calculate up vector
-	glm::mat4 rot_y(1);
-	glm::vec3 right = glm::cross(up, dir);
-	glm::normalize(right);
-	//up = glm::cross(dir, right);
-
-	cout << "X : " << lookDir.x << ", Y : " << lookDir.y << ", Z : "<< lookDir.z<<endl;
 	mousePos = glm::vec2(_x, _y);
 }
 
@@ -409,12 +405,12 @@ int main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-
+	SetCursorPos(1280, 720);
 	init();
 	glutDisplayFunc(display);
 
 	glutKeyboardFunc(KeyDown);
-	glutMotionFunc(MouseMove);
+	//glutMotionFunc(MouseMove);
 
 	glutTimerFunc(15, Timer, 0);
 	//glutIdleFunc(idle);
